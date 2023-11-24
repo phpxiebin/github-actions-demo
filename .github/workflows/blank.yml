@@ -1,0 +1,31 @@
+name: Laravel Deploy  
+  
+on:  
+  push:  
+    branches: [ test ] # 监听 test 分支的推送事件  
+  
+jobs:  
+  deploy:  
+    runs-on: ubuntu-latest  
+  
+    steps:  
+    - uses: actions/checkout@v2  
+  
+    - name: Set up PHP  
+      uses: shivammathur/setup-php@v2  
+      with:  
+        php-version: '7.4' # 根据你的需求选择合适的PHP版本  
+  
+    - name: Install Dependencies  
+      run: |  
+        composer install
+  
+    - name: Deploy to Server  
+      uses: appleboy/ssh-action@master  
+      with:  
+        host: ${{ secrets.SSH_HOST }}  
+        username: ${{ secrets.SSH_USERNAME }}  
+        password: ${{ secrets.SSH_PASSWORD }}  
+        script: |  
+          cd /data/wwwroot/default/github-actions-demo 
+          git pull origin test  
